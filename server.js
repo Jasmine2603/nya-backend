@@ -106,6 +106,150 @@ app.post("/api/login", (req, res) => {
     }
   });
 });
+// ==========================================
+// TRAJETS
+// ==========================================
+
+app.get("/api/trajets", (req, res) => {
+  try {
+    const trajets = [
+      {
+        id: 1,
+        user_id: 1,
+
+        depart: "Abidjan",
+        destination: "Yamoussoukro",
+
+        distance_km: 248,
+        duree_minutes: 180,
+
+        date_depart: "2026-10-10",
+        heure_depart: "07:00",
+        heure_arrivee: "10:00",
+
+        prix: 5000,
+        places: 3,
+        statut: "Disponible",
+
+        nom: "Jimo",
+        prenom: "Yasmine"
+      },
+      {
+        id: 2,
+        user_id: 1,
+
+        depart: "Abidjan",
+        destination: "Bouaké",
+
+        distance_km: 360,
+        duree_minutes: 270,
+
+        date_depart: "2026-10-11",
+        heure_depart: "06:30",
+        heure_arrivee: "11:00",
+
+        prix: 7000,
+        places: 2,
+        statut: "Disponible",
+
+        nom: "Jimo",
+        prenom: "Yasmine"
+      },
+      {
+        id: 3,
+        user_id: 1,
+
+        depart: "Yamoussoukro",
+        destination: "Abidjan",
+
+        distance_km: 248,
+        duree_minutes: 180,
+
+        date_depart: "2026-10-12",
+        heure_depart: "14:00",
+        heure_arrivee: "17:00",
+
+        prix: 5000,
+        places: 3,
+        statut: "Disponible",
+
+        nom: "Jimo",
+        prenom: "Yasmine"
+      }
+    ];
+
+    const depart = req.query.depart
+      ? req.query.depart.trim().toLowerCase()
+      : "";
+
+    const destination = req.query.destination
+      ? req.query.destination.trim().toLowerCase()
+      : "";
+
+    const date = req.query.date
+      ? req.query.date.trim()
+      : "";
+
+    const places = req.query.places
+      ? parseInt(req.query.places)
+      : 1;
+
+    let resultats = trajets.filter((trajet) => {
+
+      if (
+        depart &&
+        !trajet.depart.toLowerCase().includes(depart)
+      ) {
+        return false;
+      }
+
+      if (
+        destination &&
+        !trajet.destination.toLowerCase().includes(destination)
+      ) {
+        return false;
+      }
+
+      if (
+        date &&
+        trajet.date_depart !== date
+      ) {
+        return false;
+      }
+
+      if (
+        places > 0 &&
+        trajet.places < places
+      ) {
+        return false;
+      }
+
+      return trajet.statut === "Disponible";
+    });
+
+    resultats.sort((a, b) => {
+      return (
+        a.date_depart + a.heure_depart
+      ).localeCompare(
+        b.date_depart + b.heure_depart
+      );
+    });
+
+    res.json({
+      success: true,
+      trajets: resultats
+    });
+
+  } catch (error) {
+
+    console.error("Erreur trajets :", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Impossible de récupérer les trajets."
+    });
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
