@@ -106,7 +106,7 @@ app.post("/api/login", (req, res) => {
     }
   });
 });
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Serveur NAYA lancé sur http://localhost:${PORT}`);
